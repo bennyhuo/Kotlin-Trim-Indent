@@ -2,7 +2,7 @@
 
 This is a Kotlin compiler plugin for a compile-time indent trim of raw String. It is pretty useful for String templates with multiline String variables.
 
-## Example
+## Examples
 
 We have two Strings as below:
 
@@ -49,7 +49,7 @@ world
     !!!
 ```
 
-Thi is because the computation of common indent size is based on the runtime String value which also contains the new lines of `s`.
+This is because the computation of common indent size is based on the runtime String value which also contains the new lines of `s`.
 
 With this plugin installed, the runtime value of String template variables are ignored, and only the white spaces of the String literal will be removed so that `s2` will be like:
 
@@ -67,7 +67,7 @@ world2
 ```
 buildscript {
     dependencies {
-        classpath("com.bennyhuo.kotlin:trimindent-gradle-plugin:1.6.10.0")
+        classpath("com.bennyhuo.kotlin:trimindent-gradle-plugin:1.6.10.1")
     }
 }
 

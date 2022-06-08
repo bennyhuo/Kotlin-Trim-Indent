@@ -6,4 +6,5 @@ pluginManagement {
 }
 
 include("trimindent-compiler")
+include("trimindent-compiler-embeddable")
 include("trimindent-gradle-plugin")
