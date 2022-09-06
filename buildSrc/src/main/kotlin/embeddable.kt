@@ -14,6 +14,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
 const val embedded = "embedded"
@@ -110,12 +111,19 @@ fun Project.testWithEmbedded() {
     configurations.create("embedded").extendsFrom(configurations.getByName("implementation"))
     embeddableCompiler()
 
-    // filter classes dir from compileJava and compileKotlin
+    // filter classes dir from compileJava
     val excludedCompiledFiles = tasks.withType<AbstractCompile>().filter {
         "test" !in it.name.toLowerCase()
     }.map {
         it.destinationDirectory.get().asFile
     }.toMutableSet()
+
+    // filter classes dir from compileKotlin
+    excludedCompiledFiles += tasks.withType<KotlinCompile>().filter {
+        "test" !in it.name.toLowerCase()
+    }.map {
+        it.destinationDirectory.get().asFile
+    }
 
     val embeddedDeps = configurations.findByName("embedded")?.files ?: emptySet()
     excludedCompiledFiles += embeddedDeps

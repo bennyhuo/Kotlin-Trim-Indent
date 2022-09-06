@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
-
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
     testImplementation("com.bennyhuo.kotlin:kotlin-compile-testing-extensions:0.4")
 }
 
