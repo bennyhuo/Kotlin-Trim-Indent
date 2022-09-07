@@ -7,8 +7,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class TrimIndentIrGenerator: IrGenerationExtension {
+class TrimIndentIrGenerator : IrGenerationExtension {
 
     private fun IrCall.isTrimIndent(): Boolean {
         return dispatchReceiver == null && extensionReceiver != null
@@ -16,39 +17,35 @@ class TrimIndentIrGenerator: IrGenerationExtension {
     }
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        moduleFragment.transformChildrenVoid(object: IrElementTransformerVoid() {
+        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(irCall: IrCall): IrExpression {
                 if (irCall.isTrimIndent()) {
-                    val extensionReceiver = irCall.extensionReceiver
-                    if(extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
+                    val extensionReceiver = irCall.extensionReceiver!!
+                    if (extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
                         extensionReceiver as IrConst<String>
                         return extensionReceiver.copyWithNewValue(extensionReceiver.value.trimIndent())
                     }
 
                     if (extensionReceiver is IrStringConcatenation) {
                         val elements = extensionReceiver.arguments.map { it.toStringElement() }
-                        val minCommonIndent = elements.filterIsInstance<ConstStringElement>()
-                            .flatMap { it.values }
-                            .minCommonIndent()
+                        val constStringElements = elements.filterIsInstance<ConstStringElement>()
+                        // No string literals, done.
+                        if (constStringElements.isEmpty()) {
+                            return super.visitCall(irCall)
+                        }
+                        val minCommonIndent = constStringElements.flatMap { it.values }.minCommonIndent()
 
-                        val lastIndex = elements.lastIndex
-                        val args = elements.mapIndexedNotNull { index, element ->
+                        elements.first().safeAs<ConstStringElement>()?.trimFirstEmptyLine()
+                        elements.last().safeAs<ConstStringElement>()?.trimLastEmptyLine()
+
+                        val args = elements.map { element ->
                             when (element) {
                                 is ConstStringElement -> {
-                                    val lastContentIndex = element.values.lastIndex
-                                    val newValue = element.values.mapIndexedNotNull { contentIndex, content ->
-                                        if (index == lastIndex && contentIndex == lastContentIndex && content.isBlank()) {
-                                            null
-                                        } else {
+                                    element.irConst.copyWithNewValue(
+                                        element.values.joinToString("\n") { content ->
                                             content.substring(minCommonIndent.coerceAtMost(content.length))
                                         }
-                                    }.joinToString("\n")
-
-                                    if ((index == 0 || index == lastIndex) && newValue.isBlank()){
-                                        null
-                                    } else {
-                                        element.irConst.copyWithNewValue(newValue)
-                                    }
+                                    )
                                 }
                                 is UnknownElement -> {
                                     element.irExpression

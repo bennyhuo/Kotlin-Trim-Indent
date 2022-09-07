@@ -31,6 +31,13 @@ class UnknownElement(val irExpression: IrExpression): IrStringElement
 
 class ConstStringElement(val irConst: IrConst<String>): IrStringElement {
 
-    val values = irConst.value.split("\n")
+    val values = irConst.value.split("\n").toMutableList()
 
+    fun trimFirstEmptyLine() {
+        if (values.firstOrNull()?.isBlank() == true) values.removeFirst()
+    }
+
+    fun trimLastEmptyLine() {
+        if (values.lastOrNull()?.isBlank() == true) values.removeLast()
+    }
 }
