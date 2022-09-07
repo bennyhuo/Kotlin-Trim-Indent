@@ -67,7 +67,7 @@ world2
 ```
 buildscript {
     dependencies {
-        classpath("com.bennyhuo.kotlin:trimindent-gradle-plugin:1.6.10.1")
+        classpath("com.bennyhuo.kotlin:trimindent-gradle-plugin:1.7.10.0")
     }
 }
 
@@ -76,3 +76,13 @@ plugins {
     id("com.bennyhuo.kotlin.trimindent")
 }
 ```
+
+## Change Log
+
+### 1.7.10.0
+
+Compatible with Kotlin 1.7.10.
+
+### 1.6.10.1
+
+Compatible with Kotlin 1.6.10.
