@@ -5,7 +5,7 @@ plugins {
     java
     kotlin("kapt")
     id("com.github.gmazzo.buildconfig")
-    id("com.github.johnrengelman.shadow")
+    id("com.bennyhuo.kotlin.plugin.embeddable.test")
 }
 
 dependencies {
@@ -29,5 +29,3 @@ buildConfig {
     packageName("$group.trimindent")
     buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${project.property("KOTLIN_PLUGIN_ID")}\"")
 }
-
-testWithEmbedded()

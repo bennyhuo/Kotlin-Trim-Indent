@@ -9,7 +9,12 @@ include("trimindent-compiler")
 include("trimindent-compiler-embeddable")
 include("trimindent-gradle-plugin")
 
-val testingExtensions = file("../kotlin-compile-testing-extensions")
-if(testingExtensions.exists()) {
-    includeBuild(testingExtensions)
+listOf(
+    "kotlin-compile-testing-extensions",
+    "kotlin-compiler-plugin-embeddable-plugin"
+).forEach {
+    val projectFile = file("../$it")
+    if (projectFile.exists()) {
+        includeBuild(projectFile)
+    }
 }
