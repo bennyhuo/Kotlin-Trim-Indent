@@ -26,4 +26,8 @@ subprojects {
 
         apply(plugin = "com.vanniktech.maven.publish")
     }
+
+    pluginManager.withPlugin("java") {
+        extensions.getByType<JavaPluginExtension>().sourceCompatibility = JavaVersion.VERSION_1_8
+    }
 }

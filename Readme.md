@@ -79,7 +79,11 @@ plugins {
 
 ## Change Log
 
-### 1.7.10.0
+### 1.7.10.2
+
+Compatible with Java 8.
+
+### 1.7.10.1
 
 Compatible with Kotlin 1.7.10.
 
