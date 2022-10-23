@@ -4,21 +4,27 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TrimIndentIrGenerator : IrGenerationExtension {
 
     private fun IrCall.isTrimIndent(): Boolean {
-        return dispatchReceiver == null && extensionReceiver != null
-                && symbol.owner.kotlinFqName.asString() == "kotlin.text.trimIndent"
+        return symbol.owner.name == Name.identifier("trimIndent")
+                && dispatchReceiver == null
+                && extensionReceiver?.type?.classFqName?.asString() == "kotlin.String"
+                && symbol.owner.fqNameWhenAvailable?.parent()?.asString() == "kotlin.text.StringsKt"
     }
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(irCall: IrCall): IrExpression {
+
                 if (irCall.isTrimIndent()) {
                     val extensionReceiver = irCall.extensionReceiver!!
                     if (extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
@@ -33,7 +39,8 @@ class TrimIndentIrGenerator : IrGenerationExtension {
                         if (constStringElements.isEmpty()) {
                             return super.visitCall(irCall)
                         }
-                        val minCommonIndent = constStringElements.flatMap { it.values }.minCommonIndent()
+                        val minCommonIndent =
+                            constStringElements.flatMap { it.values }.minCommonIndent()
 
                         elements.first().safeAs<ConstStringElement>()?.trimFirstEmptyLine()
                         elements.last().safeAs<ConstStringElement>()?.trimLastEmptyLine()
@@ -47,6 +54,7 @@ class TrimIndentIrGenerator : IrGenerationExtension {
                                         }
                                     )
                                 }
+
                                 is UnknownElement -> {
                                     element.irExpression
                                 }

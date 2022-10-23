@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") apply false
+    kotlin("jvm") version "1.7.10" apply false
     id("org.jetbrains.dokka") version "1.7.10" apply false
     id("com.github.gmazzo.buildconfig") version "2.1.0" apply false
     id("com.bennyhuo.kotlin.plugin.embeddable") version "1.7.10.0" apply false
@@ -18,6 +18,7 @@ plugins {
 subprojects {
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 
     if (!name.startsWith("sample") && parent?.name?.startsWith("sample") != true) {
