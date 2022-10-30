@@ -33,7 +33,7 @@ fun main() {
     println(string2)
 }
 
-// GENERATED
+// EXPECT
 // FILE: Main.kt.stdout
 hello
 world
