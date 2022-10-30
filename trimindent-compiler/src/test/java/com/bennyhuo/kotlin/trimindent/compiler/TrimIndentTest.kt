@@ -3,7 +3,7 @@ package com.bennyhuo.kotlin.trimindent.compiler
 import com.bennyhuo.kotlin.compiletesting.extensions.module.IR_OUTPUT_TYPE_KOTLIN_LIKE
 import com.bennyhuo.kotlin.compiletesting.extensions.module.KotlinModule
 import com.bennyhuo.kotlin.compiletesting.extensions.module.checkResult
-import com.bennyhuo.kotlin.compiletesting.extensions.source.SingleFileModuleInfoLoader
+import com.bennyhuo.kotlin.compiletesting.extensions.source.FileBasedModuleInfoLoader
 import org.junit.Test
 
 /**
@@ -18,7 +18,7 @@ class TrimIndentTest {
 
 
     private fun testBase(fileName: String) {
-        val loader = SingleFileModuleInfoLoader("testData/$fileName")
+        val loader = FileBasedModuleInfoLoader("testData/$fileName")
         val sourceModuleInfos = loader.loadSourceModuleInfos()
 
         val modules = sourceModuleInfos.map {
