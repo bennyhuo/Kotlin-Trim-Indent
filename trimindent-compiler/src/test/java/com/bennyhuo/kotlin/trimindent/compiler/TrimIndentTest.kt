@@ -1,10 +1,8 @@
 package com.bennyhuo.kotlin.trimindent.compiler
 
+import com.bennyhuo.kotlin.compiletesting.extensions.module.IR_OUTPUT_TYPE_KOTLIN_LIKE
 import com.bennyhuo.kotlin.compiletesting.extensions.module.KotlinModule
 import com.bennyhuo.kotlin.compiletesting.extensions.module.checkResult
-import com.bennyhuo.kotlin.compiletesting.extensions.module.compileAll
-import com.bennyhuo.kotlin.compiletesting.extensions.module.resolveAllDependencies
-import com.bennyhuo.kotlin.compiletesting.extensions.result.ResultCollector
 import com.bennyhuo.kotlin.compiletesting.extensions.source.SingleFileModuleInfoLoader
 import org.junit.Test
 
@@ -27,11 +25,11 @@ class TrimIndentTest {
             KotlinModule(it, componentRegistrars = listOf(TrimIndentComponentRegistrar()))
         }
 
-        modules.resolveAllDependencies()
-        modules.compileAll()
         modules.checkResult(
             loader.loadExpectModuleInfos(),
-            executeEntries = true
+            executeEntries = true,
+            checkGeneratedIr = true,
+            irOutputType = IR_OUTPUT_TYPE_KOTLIN_LIKE
         )
     }
 

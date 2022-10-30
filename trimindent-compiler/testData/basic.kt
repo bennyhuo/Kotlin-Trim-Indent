@@ -34,7 +34,7 @@ fun main() {
 }
 
 // GENERATED
-// FILE: Main.kt
+// FILE: Main.kt.stdout
 hello
 world
 !!!
@@ -52,3 +52,28 @@ items:
   - 1
   - 2
   - 3
+// FILE: Main.kt.ir
+val s: String = """hello
+world
+!!!"""
+val s2: String = """${s}
+hello2
+world2
+!!!"""
+val string: String = """items:
+  - 1
+  - 2
+  - 3"""
+val items: List<Int> = listOf(1, 2, 3)
+val string2: String = "items:\n${items.joinToString(
+  separator = "\n"
+) { it: Int ->
+  "  - $it"
+}
+}"
+fun main() {
+  println(s)
+  println(s2)
+  println(string)
+  println(string2)
+}
