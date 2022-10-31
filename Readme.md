@@ -65,15 +65,25 @@ world2
 ## Try it
 
 ```
+plugins {
+    ...
+    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.2"
+}
+```
+
+For snapshot:
+
+```
 buildscript {
-    dependencies {
-        classpath("com.bennyhuo.kotlin:trimindent-gradle-plugin:1.7.10.0")
+    repositories {
+        ...
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent")
+    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.3-SNAPSHOT"
 }
 ```
 
