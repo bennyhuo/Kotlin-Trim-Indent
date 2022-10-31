@@ -4,27 +4,17 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.classFqName
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TrimIndentIrGenerator : IrGenerationExtension {
 
-    private fun IrCall.isTrimIndent(): Boolean {
-        return symbol.owner.name == Name.identifier("trimIndent")
-                && dispatchReceiver == null
-                && extensionReceiver?.type?.classFqName?.asString() == "kotlin.String"
-                && symbol.owner.fqNameWhenAvailable?.parent()?.asString() == "kotlin.text.StringsKt"
-    }
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(irCall: IrCall): IrExpression {
-
                 if (irCall.isTrimIndent()) {
                     val extensionReceiver = irCall.extensionReceiver!!
                     if (extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
@@ -34,28 +24,53 @@ class TrimIndentIrGenerator : IrGenerationExtension {
 
                     if (extensionReceiver is IrStringConcatenation) {
                         val elements = extensionReceiver.arguments.map { it.toStringElement() }
-                        val constStringElements = elements.filterIsInstance<ConstStringElement>()
+                        val irConstStringElements = elements.filterIsInstance<IrConstStringElement>()
                         // No string literals, done.
-                        if (constStringElements.isEmpty()) {
+                        if (irConstStringElements.isEmpty()) {
                             return super.visitCall(irCall)
                         }
                         val minCommonIndent =
-                            constStringElements.flatMap { it.values }.minCommonIndent()
-
-                        elements.first().safeAs<ConstStringElement>()?.trimFirstEmptyLine()
-                        elements.last().safeAs<ConstStringElement>()?.trimLastEmptyLine()
-
-                        val args = elements.map { element ->
-                            when (element) {
-                                is ConstStringElement -> {
-                                    element.irConst.copyWithNewValue(
-                                        element.values.joinToString("\n") { content ->
-                                            content.substring(minCommonIndent.coerceAtMost(content.length))
-                                        }
-                                    )
+                            irConstStringElements.fold(ArrayList<String>()) { acc, element ->
+                                if (element.values.isNotEmpty()) {
+                                    acc += if (acc.isEmpty()) {
+                                        element.values
+                                    } else {
+                                        // the first value is not belong to a new line.
+                                        element.values.subList(1, element.values.size)
+                                    }
                                 }
+                                acc
+                            }.minCommonIndent()
 
-                                is UnknownElement -> {
+                        elements.first().safeAs<IrConstStringElement>()?.trimFirstEmptyLine()
+                        elements.last().safeAs<IrConstStringElement>()?.trimLastEmptyLine()
+
+                        val args = elements.fold(ArrayList<IrStringElement>()) { acc, element ->
+                            acc += when(element) {
+                                is IrConstStringElement -> {
+                                    val start = if (acc.isEmpty()) 0 else 1
+                                    for (i in start until element.values.size) {
+                                        val content = element.values[i]
+                                        element.values[i] = content.substring(minCommonIndent.coerceAtMost(content.length))
+                                    }
+                                    element
+                                }
+                                is IrExpressionElement -> {
+                                    acc.lastOrNull()?.safeAs<IrConstStringElement>()?.let { last ->
+                                        last.values.lastOrNull()?.takeIf { it.isBlank() }?.let { lastLine ->
+                                            last.values[last.values.lastIndex] = ""
+                                            element.reIndent(pluginContext, lastLine)
+                                        }
+                                    } ?: element
+                                }
+                            }
+                            acc
+                        }.map { element ->
+                            when (element) {
+                                is IrConstStringElement -> {
+                                    element.irConst.copyWithNewValue(element.values.joinToString("\n"))
+                                }
+                                is IrExpressionElement -> {
                                     element.irExpression
                                 }
                             }

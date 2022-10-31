@@ -1,8 +1,13 @@
 package com.bennyhuo.kotlin.trimindent.compiler
 
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 /**
  * Created by benny.
@@ -20,16 +25,42 @@ fun List<String>.minCommonIndent(): Int {
 sealed interface IrStringElement
 
 fun IrExpression.toStringElement(): IrStringElement {
-    return if(this is IrConst<*> && this.kind == IrConstKind.String) {
-        ConstStringElement(this as IrConst<String>)
+    return if (this is IrConst<*> && this.kind == IrConstKind.String) {
+        IrConstStringElement(this as IrConst<String>)
     } else {
-        UnknownElement(this)
+        IrExpressionElement(this)
     }
 }
 
-class UnknownElement(val irExpression: IrExpression): IrStringElement
+class IrExpressionElement(val irExpression: IrExpression) : IrStringElement {
+    fun reIndent(pluginContext: IrPluginContext, indent: String): IrExpressionElement {
+        if (indent.isEmpty()) return this
 
-class ConstStringElement(val irConst: IrConst<String>): IrStringElement {
+        val preIndentFunction = pluginContext.prependIndent()
+        val irCall = IrCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            preIndentFunction.returnType,
+            preIndentFunction.symbol as IrSimpleFunctionSymbol,
+            0,
+            1
+        ).apply {
+            extensionReceiver = irExpression
+            putValueArgument(
+                0, IrConstImpl.string(
+                    irExpression.startOffset,
+                    irExpression.endOffset,
+                    pluginContext.irBuiltIns.stringType,
+                    indent
+                )
+            )
+        }
+
+        return IrExpressionElement(irCall)
+    }
+}
+
+class IrConstStringElement(val irConst: IrConst<String>) : IrStringElement {
 
     val values = irConst.value.split("\n").toMutableList()
 

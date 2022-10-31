@@ -13,6 +13,8 @@ val s2 = """
     !!!
 """.trimIndent()
 
+val s3 = "  >>> $s2 <<<".trimIndent()
+
 val string = """
   items:
     - 1
@@ -29,6 +31,7 @@ val string2 = """
 fun main() {
     println(s)
     println(s2)
+    println(s3)
     println(string)
     println(string2)
 }
@@ -44,6 +47,12 @@ world
 hello2
 world2
 !!!
+>>> hello
+world
+!!!
+hello2
+world2
+!!! <<<
 items:
   - 1
   - 2
@@ -60,20 +69,22 @@ val s2: String = """${s}
 hello2
 world2
 !!!"""
+val s3: String = ">>> ${s2} <<<"
 val string: String = """items:
   - 1
   - 2
   - 3"""
 val items: List<Int> = listOf(1, 2, 3)
 val string2: String = "items:\n${items.joinToString(
-  separator = "\n"
+    separator = "\n"
 ) { it: Int ->
-  "  - $it"
+    "  - $it"
 }
 }"
 fun main() {
-  println(s)
-  println(s2)
-  println(string)
-  println(string2)
+    println(s)
+    println(s2)
+    println(s3)
+    println(string)
+    println(string2)
 }
