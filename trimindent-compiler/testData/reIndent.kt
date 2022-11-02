@@ -27,7 +27,7 @@ fun main() {
     println(s4)
 }
 // EXPECT
-// FILE: Main.kt.stdout
+// FILE: MainKt.main.stdout
 def test(a) {
     if(a > 1) {
         return true

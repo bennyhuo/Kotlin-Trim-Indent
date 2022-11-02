@@ -37,7 +37,7 @@ fun main() {
 }
 
 // EXPECT
-// FILE: Main.kt.stdout
+// FILE: MainKt.main.stdout
 hello
 world
 !!!
