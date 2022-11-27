@@ -62,12 +62,47 @@ world2
 !!!
 ```
 
+With version 1.7.10.3, you can also do this magic:
+
+```
+val s1 = """
+    if(a > 1) {
+        return true
+    }
+""".trimIndent()
+val s2 = """
+    def test(a) {
+        $s1
+    }
+""".trimIndent()
+
+val s3 = """
+    class Test {
+        $s2
+    }
+""".trimIndent()
+```
+
+The result value of s3 will be:
+
+```
+class Test {
+    def test(a) {
+        if(a > 1) {
+            return true
+        }
+    }
+}
+```
+
+It is really useful when you use Kotlin String template as a template to render some other Strings.
+
 ## Try it
 
 ```
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.2"
+    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.3"
 }
 ```
 
@@ -83,11 +118,16 @@ buildscript {
 
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.3-SNAPSHOT"
+    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.4-SNAPSHOT"
 }
 ```
 
 ## Change Log
+
+### 1.7.10.3
+
+* Fix: A newline was mistakenly inserted after an interpolated variable.
+* Feat: Reindent the whole value of the interpolated variable. 
 
 ### 1.7.10.2
 
