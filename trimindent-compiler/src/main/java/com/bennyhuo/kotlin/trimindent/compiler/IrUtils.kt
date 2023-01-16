@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.name.CallableId
 
 /**
  * Created by benny.
@@ -36,7 +37,7 @@ internal fun IrCall.isTrimIndent(): Boolean {
 }
 
 fun IrPluginContext.prependIndent(): IrFunction {
-    return referenceFunctions(FqName("kotlin.text.prependIndent"))
+    return referenceFunctions(CallableId(FqName("kotlin.text"), Name.identifier("prependIndent")))
         .singleOrNull {
             it.owner.extensionReceiverParameter?.type?.classFqName?.asString() == "kotlin.String"
         }?.owner!!

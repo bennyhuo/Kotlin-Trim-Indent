@@ -5,11 +5,13 @@ import com.bennyhuo.kotlin.compiletesting.extensions.module.IR_OUTPUT_TYPE_KOTLI
 import com.bennyhuo.kotlin.compiletesting.extensions.module.KotlinModule
 import com.bennyhuo.kotlin.compiletesting.extensions.module.checkResult
 import com.bennyhuo.kotlin.compiletesting.extensions.source.FileBasedModuleInfoLoader
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Test
 
 /**
  * Created by benny at 2022/1/15 8:55 PM.
  */
+@OptIn(ExperimentalCompilerApi::class)
 class TrimIndentTest {
 
     @Test
@@ -27,7 +29,7 @@ class TrimIndentTest {
         val sourceModuleInfos = loader.loadSourceModuleInfos()
 
         val modules = sourceModuleInfos.map {
-            KotlinModule(it, componentRegistrars = listOf(TrimIndentComponentRegistrar()))
+            KotlinModule(it, true, compilerPluginRegistrars = listOf(TrimIndentCompilerPluginRegistrar()))
         }
 
         modules.checkResult(

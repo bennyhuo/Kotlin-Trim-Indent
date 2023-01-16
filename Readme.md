@@ -102,7 +102,7 @@ It is really useful when you use Kotlin String template as a template to render 
 ```
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.3"
+    id("com.bennyhuo.kotlin.trimindent") version "1.8.0.0"
 }
 ```
 
@@ -118,11 +118,15 @@ buildscript {
 
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.7.10.4-SNAPSHOT"
+    id("com.bennyhuo.kotlin.trimindent") version "1.8.0.1-SNAPSHOT"
 }
 ```
 
 ## Change Log
+
+### 1.8.0.0
+
+* Upgrade Kotlin to 1.8.0.
 
 ### 1.7.10.3
 
