@@ -3,7 +3,7 @@ buildscript {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public")
     }
     dependencies {
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.22.0")
     }
 }
 
