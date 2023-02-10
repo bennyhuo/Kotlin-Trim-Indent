@@ -1,5 +1,8 @@
 # Trim Indent
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin)
+
+
 This is a Kotlin compiler plugin for a compile-time indent trim of raw String. It is pretty useful for String templates with multiline String variables.
 
 ## Examples
