@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
@@ -32,7 +33,7 @@ internal fun IrCall.isTrimIndent(): Boolean {
     return symbol.owner.name == Name.identifier("trimIndent")
             && dispatchReceiver == null
             && extensionReceiver?.type?.classFqName?.asString() == "kotlin.String"
-            && symbol.owner.fqNameWhenAvailable?.parent()?.asString() == "kotlin.text.StringsKt"
+            && symbol.owner.getPackageFragment()?.fqName?.asString() == "kotlin.text"
 }
 
 fun IrPluginContext.prependIndent(): IrFunction {
