@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
-    testImplementation("com.bennyhuo.kotlin:kotlin-compile-testing-extensions:1.8.0.0-SNAPSHOT")
+    testImplementation("com.bennyhuo.kotlin:kotlin-compile-testing-extensions:1.8.0.0")
 }
 
 val compileKotlin: KotlinCompile by tasks
