@@ -23,6 +23,11 @@ class TrimIndentTest {
         testBase("reIndent.kt")
     }
 
+    @Test
+    fun blankLine() {
+        testBase("blankLine.kt")
+    }
+
     private fun testBase(fileName: String) {
         val loader = FileBasedModuleInfoLoader("testData/$fileName")
         val sourceModuleInfos = loader.loadSourceModuleInfos()

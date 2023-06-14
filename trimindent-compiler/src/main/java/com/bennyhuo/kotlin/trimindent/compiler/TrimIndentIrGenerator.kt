@@ -37,7 +37,15 @@ class TrimIndentIrGenerator : IrGenerationExtension {
                                     acc += if (acc.isEmpty()) {
                                         element.values
                                     } else {
+                                        // prefix${expression}postfix
+                                        val prefix = acc.last()
+                                        if (prefix.isBlank()) {
+                                            // append whatever a non-blank character as a placeholder of the expression.
+                                            acc[acc.lastIndex] = "$prefix!"
+                                        }
+
                                         // the first value is not belong to a new line.
+                                        // It follows the previous expression in the same line.
                                         element.values.subList(1, element.values.size)
                                     }
                                 }
