@@ -1,16 +1,18 @@
-name: Release
+---
+name: "Tagged Release"
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*"
 
 jobs:
-  release-on-push:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
     steps:
-      - uses: rymndhng/release-on-push-action@master
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
-          bump_version_scheme: norelease
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false

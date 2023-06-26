@@ -1,7 +1,6 @@
 # Trim Indent
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin)
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bennyhuo.kotlin/trimindent-gradle-plugin)
 
 This is a Kotlin compiler plugin for a compile-time indent trim of raw String. It is pretty useful for String templates with multiline String variables.
 
@@ -105,27 +104,16 @@ It is really useful when you use Kotlin String template as a template to render 
 ```
 plugins {
     ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.8.0"
-}
-```
-
-For snapshot:
-
-```
-buildscript {
-    repositories {
-        ...
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
-plugins {
-    ...
-    id("com.bennyhuo.kotlin.trimindent") version "1.8.1-SNAPSHOT"
+    id("com.bennyhuo.kotlin.trimindent") version "<latest-version>"
 }
 ```
 
 ## Change Log
+
+### 1.8.20-1.0.0
+
+* Use new version style.
+* Upgrade Kotlin to 1.8.20.
 
 ### 1.8.0
 
