@@ -110,6 +110,14 @@ plugins {
 
 ## Change Log
 
+### 1.9.10-1.1.0
+
+* Kotlin 1.9.10.
+
+### 1.8.20-1.1.0
+
+* Fix embedded trimIndent call expressions.
+
 ### 1.8.20-1.0.0
 
 * Use new version style.
