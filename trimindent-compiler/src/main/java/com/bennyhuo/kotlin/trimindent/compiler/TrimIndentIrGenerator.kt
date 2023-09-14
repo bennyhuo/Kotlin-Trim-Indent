@@ -21,7 +21,7 @@ class TrimIndentIrGenerator : IrGenerationExtension {
                     val extensionReceiver = irCall.extensionReceiver!!
                     if (extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
                         extensionReceiver as IrConst<String>
-                        return extensionReceiver.copyWithNewValue(extensionReceiver.value.trimIndent())
+                        return super.visitExpression(extensionReceiver.copyWithNewValue(extensionReceiver.value.trimIndent()))
                     }
 
                     if (extensionReceiver is IrStringConcatenation) {
@@ -86,7 +86,7 @@ class TrimIndentIrGenerator : IrGenerationExtension {
                             }
                         }
 
-                        return extensionReceiver.copyWithNewValues(args)
+                        return super.visitExpression(extensionReceiver.copyWithNewValues(args))
                     }
                 }
 

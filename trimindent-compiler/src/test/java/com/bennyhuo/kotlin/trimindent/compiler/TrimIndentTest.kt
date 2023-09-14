@@ -28,6 +28,11 @@ class TrimIndentTest {
         testBase("blankLine.kt")
     }
 
+    @Test
+    fun embedded() {
+        testBase("embedded.kt")
+    }
+
     private fun testBase(fileName: String) {
         val loader = FileBasedModuleInfoLoader("testData/$fileName")
         val sourceModuleInfos = loader.loadSourceModuleInfos()
