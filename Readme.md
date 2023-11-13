@@ -110,36 +110,4 @@ plugins {
 
 ## Change Log
 
-### 1.9.10-1.1.0
-
-* Kotlin 1.9.10.
-
-### 1.8.20-1.1.0
-
-* Fix embedded trimIndent call expressions.
-
-### 1.8.20-1.0.0
-
-* Use new version style.
-* Upgrade Kotlin to 1.8.20.
-
-### 1.8.0
-
-* Upgrade Kotlin to 1.8.0.
-
-### 1.7.10.3
-
-* Fix: A newline was mistakenly inserted after an interpolated variable.
-* Feat: Reindent the whole value of the interpolated variable. 
-
-### 1.7.10.2
-
-Compatible with Java 8.
-
-### 1.7.10.1
-
-Compatible with Kotlin 1.7.10.
-
-### 1.6.10.1
-
-Compatible with Kotlin 1.6.10.
+See [releases](ttps://github.com/bennyhuo/Kotlin-Trim-Indent/releases).

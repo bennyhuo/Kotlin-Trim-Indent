@@ -34,7 +34,7 @@ internal fun IrCall.isTrimIndent(): Boolean {
     return symbol.owner.name == Name.identifier("trimIndent")
             && dispatchReceiver == null
             && extensionReceiver?.type?.classFqName?.asString() == "kotlin.String"
-            && symbol.owner.getPackageFragment().fqName.asString() == "kotlin.text"
+            && symbol.owner.getPackageFragment().packageFqName.asString() == "kotlin.text"
 }
 
 fun IrPluginContext.prependIndent(): IrFunction {
