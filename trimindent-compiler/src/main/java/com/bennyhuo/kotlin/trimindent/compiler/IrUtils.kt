@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.CallableId
 /**
  * Created by benny.
  */
-fun IrConst<String>.copyWithNewValue(newValue: String) =
+fun IrConst.copyWithNewValue(newValue: String) =
     IrConstImpl.string(startOffset, endOffset, type, newValue)
 
 fun IrStringConcatenation.copyWithNewValues(

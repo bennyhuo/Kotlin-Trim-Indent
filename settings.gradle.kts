@@ -6,7 +6,6 @@ pluginManagement {
 }
 
 include("trimindent-compiler")
-include("trimindent-compiler-embeddable")
 include("trimindent-gradle-plugin")
 
 val local = file("composite_build.local")

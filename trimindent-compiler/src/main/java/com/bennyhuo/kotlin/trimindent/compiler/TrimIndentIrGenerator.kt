@@ -19,9 +19,9 @@ class TrimIndentIrGenerator : IrGenerationExtension {
             override fun visitCall(irCall: IrCall): IrExpression {
                 if (irCall.isTrimIndent()) {
                     val extensionReceiver = irCall.extensionReceiver!!
-                    if (extensionReceiver is IrConst<*> && extensionReceiver.kind == IrConstKind.String) {
-                        extensionReceiver as IrConst<String>
-                        return super.visitExpression(extensionReceiver.copyWithNewValue(extensionReceiver.value.trimIndent()))
+                    if (extensionReceiver is IrConst && extensionReceiver.kind == IrConstKind.String) {
+                        val value = extensionReceiver.value as String
+                        return super.visitExpression(extensionReceiver.copyWithNewValue(value.trimIndent()))
                     }
 
                     if (extensionReceiver is IrStringConcatenation) {

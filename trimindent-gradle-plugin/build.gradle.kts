@@ -10,7 +10,7 @@ dependencies {
 }
 
 buildConfig {
-    val compilerPluginProject = project(":trimindent-compiler-embeddable")
+    val compilerPluginProject = project(":trimindent-compiler")
     packageName("${compilerPluginProject.group}.trimindent")
     buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${property("KOTLIN_PLUGIN_ID")}\"")
     buildConfigField("String", "KOTLIN_PLUGIN_GROUP", "\"${compilerPluginProject.group}\"")

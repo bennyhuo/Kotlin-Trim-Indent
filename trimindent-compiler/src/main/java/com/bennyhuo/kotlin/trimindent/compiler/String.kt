@@ -25,8 +25,8 @@ fun List<String>.minCommonIndent(): Int {
 sealed interface IrStringElement
 
 fun IrExpression.toStringElement(): IrStringElement {
-    return if (this is IrConst<*> && this.kind == IrConstKind.String) {
-        IrConstStringElement(this as IrConst<String>)
+    return if (this is IrConst && this.kind == IrConstKind.String) {
+        IrConstStringElement(this as IrConst)
     } else {
         IrExpressionElement(this)
     }
@@ -42,8 +42,7 @@ class IrExpressionElement(val irExpression: IrExpression) : IrStringElement {
             UNDEFINED_OFFSET,
             preIndentFunction.returnType,
             preIndentFunction.symbol as IrSimpleFunctionSymbol,
-            0,
-            1
+            0
         ).apply {
             extensionReceiver = irExpression
             putValueArgument(
@@ -60,9 +59,9 @@ class IrExpressionElement(val irExpression: IrExpression) : IrStringElement {
     }
 }
 
-class IrConstStringElement(val irConst: IrConst<String>) : IrStringElement {
+class IrConstStringElement(val irConst: IrConst) : IrStringElement {
 
-    val values = irConst.value.split("\n").toMutableList()
+    val values = (irConst.value as String).split("\n").toMutableList()
 
     fun trimFirstEmptyLine() {
         if (values.firstOrNull()?.isBlank() == true) values.removeFirst()
