@@ -3,7 +3,7 @@ package com.bennyhuo.kotlin.trimindent.compiler
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
-class Logger(private val messageCollector: MessageCollector) {
+class Logger(private val messageCollector: MessageCollector?) {
 
     fun info(message: Any?) {
         println(CompilerMessageSeverity.INFO, message)
@@ -18,7 +18,7 @@ class Logger(private val messageCollector: MessageCollector) {
     }
 
     fun println(level: CompilerMessageSeverity, message: Any?) {
-        messageCollector.report(level, "[TrimIndent] ${message.toString()}")
+        messageCollector?.report(level, "[TrimIndent] ${message.toString()}")
     }
 
 }
