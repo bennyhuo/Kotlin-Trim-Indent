@@ -5,7 +5,13 @@ pluginManagement {
     }
 }
 
-include("trimindent-compiler")
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    } 
+}
+
 include("trimindent-compiler-embeddable")
 include("trimindent-gradle-plugin")
 

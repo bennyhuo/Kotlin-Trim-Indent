@@ -1,10 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+
 plugins {
-    kotlin("jvm") version "2.0.0" apply false
+    kotlin("jvm") version "2.0.20" apply false
     id("org.jetbrains.dokka") version "1.7.10" apply false
     id("com.github.gmazzo.buildconfig") version "2.1.0" apply false
     id("com.vanniktech.maven.publish") version "0.22.0" apply false
-    id("com.bennyhuo.kotlin.plugin.embeddable") version "1.8.1" apply false
-    id("com.bennyhuo.kotlin.plugin.embeddable.test") version "1.8.1" apply false
 }
 
 subprojects {
@@ -22,5 +22,9 @@ subprojects {
 
     pluginManager.withPlugin("java") {
         extensions.getByType<JavaPluginExtension>().sourceCompatibility = JavaVersion.VERSION_1_8
+    }
+    
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+        extensions.getByType<KotlinProjectExtension>().jvmToolchain(8)
     }
 }
