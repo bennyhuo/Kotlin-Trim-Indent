@@ -1,0 +1,7 @@
+[versions]
+kotlin = "2.1.21"
+
+[libraries]
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
