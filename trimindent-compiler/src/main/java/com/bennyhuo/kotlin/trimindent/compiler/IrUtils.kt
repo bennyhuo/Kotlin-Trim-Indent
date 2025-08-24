@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.name.CallableId
 
 /**
@@ -31,15 +33,17 @@ fun IrStringConcatenation.copyWithNewValues(
 }
 
 internal fun IrCall.isTrimIndent(): Boolean {
-    return symbol.owner.name == Name.identifier("trimIndent")
-            && dispatchReceiver == null
-            && extensionReceiver?.type?.classFqName?.asString() == "kotlin.String"
-            && symbol.owner.getPackageFragment().packageFqName.asString() == "kotlin.text"
+    return symbol.owner.let {
+        it.name == Name.identifier("trimIndent")
+                && it.parameters.firstOrNull()?.type?.classFqName?.asString() == "kotlin.String"
+                && it.getPackageFragment().packageFqName.asString() == "kotlin.text"
+    }
+
 }
 
 fun IrPluginContext.prependIndent(): IrFunction {
     return referenceFunctions(CallableId(FqName("kotlin.text"), Name.identifier("prependIndent")))
         .singleOrNull {
-            it.owner.extensionReceiverParameter?.type?.classFqName?.asString() == "kotlin.String"
+            it.owner.parameters.firstOrNull()?.type?.classFqName?.asString() == "kotlin.String"
         }?.owner!!
 }

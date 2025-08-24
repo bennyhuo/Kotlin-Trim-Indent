@@ -1,5 +1,6 @@
 package com.bennyhuo.kotlin.trimindent.compiler
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -44,14 +45,12 @@ class IrExpressionElement(val irExpression: IrExpression) : IrStringElement {
             preIndentFunction.symbol as IrSimpleFunctionSymbol,
             0
         ).apply {
-            extensionReceiver = irExpression
-            putValueArgument(
-                0, IrConstImpl.string(
-                    irExpression.startOffset,
-                    irExpression.endOffset,
-                    pluginContext.irBuiltIns.stringType,
-                    indent
-                )
+            arguments[0] = irExpression
+            arguments[1] = IrConstImpl.string(
+                irExpression.startOffset,
+                irExpression.endOffset,
+                pluginContext.irBuiltIns.stringType,
+                indent
             )
         }
 
