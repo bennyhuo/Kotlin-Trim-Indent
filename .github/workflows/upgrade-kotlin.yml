@@ -1,0 +1,79 @@
+name: Upgrade Kotlin Version
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  upgrade-kotlin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Check for new Kotlin version and update
+        id: check_update
+        run: |
+          LATEST_VERSION=$(curl -s "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/maven-metadata.xml" | grep "<version>" | sed -e 's/<[^>]*>//g' -e 's/^[ \t]*//' -e 's/[ \t]*$//' -e 's/\r//g' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
+          CURRENT_VERSION=$(grep -oE 'kotlin\("jvm"\) version "[0-9.]+"' build.gradle.kts | cut -d'"' -f4)
+
+          if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
+            echo "Failed to fetch latest Kotlin version."
+            exit 1
+          fi
+
+          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+            echo "Kotlin is already at the latest version ($CURRENT_VERSION)."
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Updating Kotlin from $CURRENT_VERSION to $LATEST_VERSION..."
+          echo "update_needed=true" >> $GITHUB_OUTPUT
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Update build.gradle.kts
+          sed -E -i 's/kotlin\("jvm"\) version "[^"]*"/kotlin\("jvm"\) version "'"$LATEST_VERSION"'"/' build.gradle.kts
+
+          # Update gradle.properties
+          # Extract the plugin version suffix from current VERSION_NAME
+          VERSION_NAME=$(grep '^VERSION_NAME=' gradle.properties | cut -d'=' -f2)
+          # Use grep to safely extract suffix starting with "-"
+          PLUGIN_VERSION=$(echo "$VERSION_NAME" | grep -oE -- '-.*')
+          sed -E -i 's/^VERSION_NAME=.*/VERSION_NAME='"$LATEST_VERSION$PLUGIN_VERSION"'/' gradle.properties
+
+          # Update trimindent-compiler/build.gradle.kts
+          sed -E -i 's/kotlin-compile-testing-extensions:[0-9.]+(-[0-9.]+)/kotlin-compile-testing-extensions:'"$LATEST_VERSION"'\1/' trimindent-compiler/build.gradle.kts
+
+          # Update sample/gradle/libs.versions.toml
+          sed -E -i 's/^kotlin *= *".*"/kotlin = "'"$LATEST_VERSION"'"/' sample/gradle/libs.versions.toml
+
+      - name: Build and verify
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: chmod +x ./gradlew && ./gradlew build
+        continue-on-error: false # Continue to create PR even if tests fail (e.g., waiting for compile-testing-extensions update)
+
+      - name: Create Pull Request
+        if: steps.check_update.outputs.update_needed == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update Kotlin version to ${{ steps.check_update.outputs.latest_version }}"
+          title: "Update Kotlin version to ${{ steps.check_update.outputs.latest_version }}"
+          body: |
+            Automatically generated PR to update Kotlin to the latest version.
+            
+            - Previous version: `${{ steps.check_update.outputs.current_version }}`
+            - New version: `${{ steps.check_update.outputs.latest_version }}`
+            
+            _Note: The `kotlin-compile-testing-extensions` dependency was also upgraded. If this PR fails its CI build, it might mean the `kotlin-compile-testing-extensions` dependency for this new version hasn't been published yet._
+          branch: "upgrade/kotlin-${{ steps.check_update.outputs.latest_version }}"
+          base: master
